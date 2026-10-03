@@ -1,13 +1,18 @@
 {
   "name": "w28-construction",
+  "main": "worker/index.js",
   "compatibility_date": "2026-09-01",
   // Attach the site to its domains; Cloudflare creates the DNS records and certificates.
   "routes": [
     { "pattern": "w28.construction", "custom_domain": true },
     { "pattern": "www.w28.construction", "custom_domain": true }
   ],
-  // Serve the site's static files.
+  // Serve the site's static files; only requests that match no file reach the Worker.
   "assets": {
-    "directory": "."
-  }
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  // Contact form emails. Requires Email Routing on w28.construction and the
+  // CONTACT_TO secret set to a verified destination address.
+  "send_email": [{ "name": "EMAIL" }]
 }

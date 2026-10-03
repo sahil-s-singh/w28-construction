@@ -269,12 +269,14 @@
           </div>
         </div>
       </div>
-      <form class="contact-form" onsubmit="return false;">
-        <label>Name<input type="text" name="name" required></label>
-        <label>Email<input type="email" name="email" required></label>
-        <label>Phone<input type="tel" name="phone"></label>
-        <label>Project Details<textarea name="message" rows="4" required></textarea></label>
+      <form class="contact-form" action="/api/contact" method="post">
+        <label>Name<input type="text" name="name" maxlength="100" required></label>
+        <label>Email<input type="email" name="email" maxlength="200" required></label>
+        <label>Phone<input type="tel" name="phone" maxlength="40"></label>
+        <label>Project Details<textarea name="message" rows="4" maxlength="5000" required></textarea></label>
+        <label class="hp" aria-hidden="true">Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label>
         <button type="submit" class="btn btn-primary">Send Message</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
