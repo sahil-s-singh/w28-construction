@@ -1,0 +1,13 @@
+{
+  "name": "w28-construction",
+  "compatibility_date": "2026-09-01",
+  // Attach the site to its domains; Cloudflare creates the DNS records and certificates.
+  "routes": [
+    { "pattern": "w28.construction", "custom_domain": true },
+    { "pattern": "www.w28.construction", "custom_domain": true }
+  ],
+  // Serve the site's static files.
+  "assets": {
+    "directory": "."
+  }
+}
