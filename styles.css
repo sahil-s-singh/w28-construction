@@ -478,8 +478,12 @@ h1, h2, h3 {
 .contact-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .form-status { margin: 0; font-size: 0.95rem; }
 .form-status:empty { display: none; }
-.form-status.is-success { color: #2e7d32; }
 .form-status.is-error { color: #c62828; }
+.form-success { display: none; text-align: center; padding: 24px 0; outline: none; }
+.form-success h3 { font-family: var(--font-display); color: var(--navy); font-size: 1.6rem; margin: 0 0 8px; }
+.form-success p { margin: 0 0 20px; color: var(--navy); }
+.contact-form.is-sent > :not(.form-success) { display: none; }
+.contact-form.is-sent .form-success { display: block; }
 
 /* Footer */
 .site-footer { background: var(--navy-dark); color: #aeb8c1; }

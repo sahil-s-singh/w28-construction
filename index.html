@@ -6,7 +6,7 @@
 <title>W28 Construction | Reno + Build</title>
 <meta name="description" content="W28 Construction — renovations, new builds, and general contracting done right. Licensed, insured, and serving Saskatchewan.">
 <link rel="icon" type="image/png" href="assets/logo-icon-gold.png">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -276,7 +276,12 @@
         <label>Project Details<textarea name="message" rows="4" maxlength="5000" required></textarea></label>
         <label class="hp" aria-hidden="true">Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label>
         <button type="submit" class="btn btn-primary">Send Message</button>
-        <p class="form-status" role="status" aria-live="polite"></p>
+        <p class="form-status" role="alert"></p>
+        <div class="form-success" tabindex="-1">
+          <h3>Thanks &mdash; message sent!</h3>
+          <p>We've received your project details and will be in touch soon.</p>
+          <button type="button" class="btn btn-primary form-reset">Send another message</button>
+        </div>
       </form>
     </div>
   </section>
@@ -318,6 +323,6 @@
   </div>
 </footer>
 
-<script src="script.js"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>
