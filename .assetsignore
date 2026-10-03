@@ -3,6 +3,7 @@
 .assetsignore
 .wrangler
 node_modules
+worker
 wrangler.jsonc
 README.md
 .dev.vars
