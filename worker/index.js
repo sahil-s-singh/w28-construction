@@ -1,5 +1,5 @@
 const FROM = { email: 'website@w28.construction', name: 'W28 Construction Website' };
-const LIMITS = { name: 100, email: 200, phone: 40, message: 5000 };
+const LIMITS = { name: 100, email: 200, phone: 40, address: 200, project_type: 100, contact_method: 100, timing: 100, message: 5000 };
 
 function field(form, key) {
   return String(form.get(key) || '').trim();
@@ -20,6 +20,10 @@ async function handleContact(request, env) {
     name: field(form, 'name'),
     email: field(form, 'email'),
     phone: field(form, 'phone'),
+    address: field(form, 'address'),
+    project_type: field(form, 'project_type'),
+    contact_method: field(form, 'contact_method'),
+    timing: field(form, 'timing'),
     message: field(form, 'message'),
   };
 
@@ -44,6 +48,10 @@ async function handleContact(request, env) {
     `Name: ${data.name}`,
     `Email: ${data.email}`,
     `Phone: ${data.phone || '-'}`,
+    `Property address: ${data.address || '-'}`,
+    `Project type: ${data.project_type || '-'}`,
+    `Preferred contact method: ${data.contact_method || '-'}`,
+    `Preferred timing: ${data.timing || '-'}`,
     '',
     data.message,
   ].join('\n');
