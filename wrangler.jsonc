@@ -14,5 +14,10 @@
   },
   // Contact form emails. Requires Email Routing on w28.construction and the
   // CONTACT_TO secret set to a verified destination address.
-  "send_email": [{ "name": "EMAIL" }]
+  "send_email": [{ "name": "EMAIL" }],
+  // Bindings for preview deployments of pull requests (wrangler preview). Previews also
+  // need the CONTACT_TO secret: npx wrangler preview secret put CONTACT_TO
+  "previews": {
+    "send_email": [{ "name": "EMAIL" }]
+  }
 }
