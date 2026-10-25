@@ -125,12 +125,21 @@
 <main id="main">
 
   <section class="hero" id="top">
+    <div class="hero-video-slot">
+      <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/posters/hero-wide.jpg" aria-label="W28 Construction project highlights video">
+        <source src="assets/videos/hero-wide.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-shade" aria-hidden="true"></div>
+    <button type="button" class="hero-pause" aria-label="Pause background video" aria-pressed="false">
+      <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+    </button>
+    <a href="#services" class="hero-scroll" aria-label="Scroll to the next section">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </a>
     <div class="container hero-inner">
-      <div class="hero-video-slot">
-        <video class="hero-video" autoplay muted loop playsinline controls preload="auto" poster="assets/posters/hero-wide.jpg" aria-label="W28 Construction project highlights video">
-          <source src="assets/videos/hero-wide.mp4" type="video/mp4">
-        </video>
-      </div>
       <div class="hero-copy">
         <p class="eyebrow">Build + Refresh</p>
         <h1>Building spaces that<br>last generations.</h1>
