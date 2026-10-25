@@ -579,6 +579,12 @@ let lastScrollY = window.scrollY;
 function tuckChips() {
   if (!chipBar || !chipBar.offsetParent) return;
   const y = window.scrollY;
+  // Keep the bar tucked during a section glide so it never lands on top of a heading.
+  if (gliding && y > 0) {
+    chipBar.classList.add('is-tucked');
+    lastScrollY = y;
+    return;
+  }
   if (y < 140 || y < lastScrollY - 6) chipBar.classList.remove('is-tucked');
   else if (y > lastScrollY + 6) chipBar.classList.add('is-tucked');
   lastScrollY = y;
