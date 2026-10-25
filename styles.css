@@ -1347,6 +1347,25 @@ section[id] { scroll-margin-top: 110px; }
   .hero .hero-inner { padding-bottom: 92px; }
 }
 
+/* ===== Phone polish ===== */
+/* The page background matches the footer, so no white shows behind the bottom call bar */
+body { background: #11171f; }
+@media (max-width: 720px) {
+  /* Phone and email are already in the bottom call bar, the Contact section and the footer */
+  .topbar { display: none; }
+
+  /* Hero text: left-aligned over a stronger fade so it reads cleanly over the video */
+  .hero .hero-inner { text-align: left; padding-left: 20px; padding-right: 20px; }
+  .hero .eyebrow { text-align: left; font-size: 0.72rem; letter-spacing: 0.2em; margin-bottom: 8px; }
+  .hero h1 { font-size: 1.95rem; line-height: 1.05; margin-bottom: 12px; }
+  .hero-location { justify-content: flex-start; font-size: 0.8rem; margin-bottom: 12px; }
+  .hero .lede { font-size: 0.93rem; line-height: 1.55; max-width: none; margin-left: 0; }
+  .hero-shade {
+    background: linear-gradient(to bottom, rgba(14, 20, 27, 0.2) 0%, rgba(14, 20, 27, 0) 22%, rgba(14, 20, 27, 0.65) 45%, rgba(14, 20, 27, 0.95) 100%);
+  }
+  .hero-pause { top: 12px; right: 12px; width: 36px; height: 36px; }
+}
+
 /* Diagonal-line texture with a gold glow on the dark sections (each keeps its own navy shade) */
 .tagline-strip, .services, .featured, .gallery, .schedule, .who, .realtors, .process, .follow, .contact, .site-footer {
   background-image:
