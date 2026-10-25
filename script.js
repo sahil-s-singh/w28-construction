@@ -216,6 +216,180 @@ function loadHeroVideo() {
 loadHeroVideo();
 phoneQuery.addEventListener('change', loadHeroVideo);
 
+// The hero fills the rest of the screen below everything above it.
+const heroSection = document.querySelector('.hero');
+function sizeHero() {
+  const offset = Math.round(heroSection.getBoundingClientRect().top + window.scrollY);
+  heroSection.style.setProperty('--hero-offset', offset + 'px');
+}
+sizeHero();
+window.addEventListener('resize', sizeHero);
+
+// Pause button for the background video.
+const heroPause = document.querySelector('.hero-pause');
+function setHeroPaused(paused) {
+  if (paused) heroVideo.pause(); else heroVideo.play().catch(() => {});
+  heroPause.setAttribute('aria-pressed', String(paused));
+  heroPause.setAttribute('aria-label', paused ? 'Play background video' : 'Pause background video');
+}
+heroPause.addEventListener('click', () => setHeroPaused(!heroVideo.paused));
+
+/* Section glide: a light scroll or swipe eases the page to the next or previous section.
+   Sections taller than the screen scroll normally until their end is reached, so nothing is skipped. */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let gliding = false;
+let awaitingNewGesture = false;
+let lastWheel = 0;
+
+function glideSections() {
+  return [...document.querySelectorAll('main > section, body > section, .site-footer')]
+    .filter((el, i, all) => all.indexOf(el) === i && !el.hidden && el.offsetHeight > 0)
+    .map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { top: rect.top + window.scrollY, bottom: rect.bottom + window.scrollY };
+    })
+    .sort((a, b) => a.top - b.top)
+    // Thin strips (like "We Show Up. We Finish.") travel with the section after them instead of being a stop of their own.
+    .reduce((stops, section) => {
+      const last = stops[stops.length - 1];
+      if (last && last.bottom - last.top < 200 && stops.length > 1) last.bottom = section.bottom;
+      else stops.push(section);
+      return stops;
+    }, []);
+}
+
+function headerHeight() {
+  return siteHeader ? siteHeader.offsetHeight : 0;
+}
+
+function maxScroll() {
+  return document.documentElement.scrollHeight - window.innerHeight;
+}
+
+// Where the next section starts, just under the sticky header.
+function heroEnd() {
+  const heroBottom = heroSection.getBoundingClientRect().bottom + window.scrollY;
+  return Math.round(heroBottom - headerHeight());
+}
+
+function glideTo(top) {
+  top = Math.max(0, Math.min(Math.round(top), maxScroll()));
+  if (reduceMotion.matches) {
+    window.scrollTo({ top, behavior: 'instant' });
+    return;
+  }
+  gliding = true;
+  awaitingNewGesture = true;
+  const start = window.scrollY;
+  const distance = top - start;
+  const duration = Math.min(1100, Math.max(600, Math.abs(distance) * 0.9));
+  const began = performance.now();
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  let done = false;
+  function finish() {
+    if (done) return;
+    done = true;
+    window.scrollTo({ top, behavior: 'instant' });
+    setTimeout(() => { gliding = false; }, 250);
+  }
+  function step(now) {
+    if (done) return;
+    const t = Math.min(1, (now - began) / duration);
+    window.scrollTo({ top: start + distance * ease(t), behavior: 'instant' });
+    if (t < 1) requestAnimationFrame(step);
+    else finish();
+  }
+  requestAnimationFrame(step);
+  // If animation frames stall (for example the tab is hidden mid-glide), land anyway so scrolling never stays blocked.
+  setTimeout(finish, duration + 300);
+}
+
+// Returns where to glide for a scroll in this direction, or null to scroll normally.
+function glideTarget(down) {
+  if (reduceMotion.matches || (siteHeader && siteHeader.classList.contains('nav-open'))) return null;
+  const sections = glideSections();
+  if (!sections.length) return null;
+  const y = window.scrollY;
+  const header = headerHeight();
+  const viewTop = y + header;
+  const viewBottom = y + window.innerHeight;
+  // The section under the header is the one being read.
+  let index = 0;
+  sections.forEach((section, i) => { if (section.top <= viewTop + 2) index = i; });
+  const current = sections[index];
+
+  let target = null;
+  if (down) {
+    if (current.bottom > viewBottom + 2) return null; // more of this section to read
+    const next = sections[index + 1];
+    if (next) target = next.top - header;
+  } else {
+    if (current.top < viewTop - 2) return null; // the start of this section is above the screen
+    const previous = sections[index - 1];
+    if (!previous) return null;
+    const fits = previous.bottom - previous.top <= window.innerHeight - header;
+    // A short section is shown whole; a tall one is entered at its end.
+    target = fits ? previous.top - header : previous.bottom - window.innerHeight;
+    if (index - 1 === 0) target = 0;
+  }
+  if (target === null) return null;
+  target = Math.max(0, Math.min(Math.round(target), maxScroll()));
+  return Math.abs(target - y) > 4 ? target : null;
+}
+
+window.addEventListener('wheel', (event) => {
+  if (event.ctrlKey || Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+  if (event.target.closest('textarea, select')) return;
+  const now = performance.now();
+  const newGesture = now - lastWheel > 200;
+  lastWheel = now;
+  if (gliding) { event.preventDefault(); return; }
+  // Swallow the trackpad's leftover momentum after a glide so one flick moves one section.
+  if (awaitingNewGesture && !newGesture) { event.preventDefault(); return; }
+  awaitingNewGesture = false;
+  const target = glideTarget(event.deltaY > 0);
+  if (target === null) return;
+  event.preventDefault();
+  glideTo(target);
+}, { passive: false });
+
+let touchStart = null;
+window.addEventListener('touchstart', (event) => {
+  touchStart = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null;
+}, { passive: true });
+window.addEventListener('touchmove', (event) => {
+  if (!touchStart) return;
+  if (gliding) { event.preventDefault(); return; }
+  const movedX = touchStart.x - event.touches[0].clientX;
+  const movedY = touchStart.y - event.touches[0].clientY;
+  if (Math.abs(movedY) < 12 && Math.abs(movedX) < 12) return;
+  touchStart = null;
+  // Sideways swipes (the card carousels) and swipes inside text boxes scroll as usual.
+  if (Math.abs(movedX) > Math.abs(movedY) || event.target.closest('textarea, select')) return;
+  const target = glideTarget(movedY > 0);
+  if (target === null) return;
+  event.preventDefault();
+  glideTo(target);
+}, { passive: false });
+
+window.addEventListener('keydown', (event) => {
+  if (event.target.closest('input, textarea, select, button, [contenteditable]')) return;
+  const down = ['ArrowDown', 'PageDown', ' '].includes(event.key) && !event.shiftKey;
+  const up = ['ArrowUp', 'PageUp'].includes(event.key) || (event.key === ' ' && event.shiftKey);
+  if (!down && !up) return;
+  if (gliding) { event.preventDefault(); return; }
+  const target = glideTarget(down);
+  if (target === null) return;
+  event.preventDefault();
+  glideTo(target);
+});
+
+document.querySelector('.hero-scroll').addEventListener('click', (event) => {
+  event.preventDefault();
+  glideTo(heroEnd());
+});
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) setHeroPaused(true);
+
 /* Navigation */
 const menuToggle = document.querySelector('.menu-toggle');
 const siteHeader = document.querySelector('.site-header');
